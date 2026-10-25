@@ -1,0 +1,213 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// ── Contributor map pins ───────────────────────────────────────────────────
+// Update this list as more contributors join.
+const contributorRegions = [
+  // North America
+  { lat:  40.7128, lng:  -74.006, label: 'New York' },
+  { lat:  34.0522, lng: -118.243, label: 'Los Angeles' },
+  { lat:  41.8781, lng:  -87.629, label: 'Chicago' },
+  { lat:  29.7604, lng:  -95.369, label: 'Houston' },
+  { lat:  25.7617, lng:  -80.191, label: 'Miami' },
+  { lat:  33.7490, lng:  -84.388, label: 'Atlanta' },
+  { lat:  47.6062, lng: -122.332, label: 'Seattle' },
+  { lat:  39.7392, lng: -104.990, label: 'Denver' },
+  { lat:  42.3601, lng:  -71.058, label: 'Boston' },
+  { lat:  38.9072, lng:  -77.036, label: 'Washington DC' },
+  { lat:  37.7749, lng: -122.419, label: 'SF Bay Area' },
+  { lat:  44.9778, lng:  -93.265, label: 'Minneapolis' },
+  { lat:  30.2672, lng:  -97.743, label: 'Austin' },
+  { lat:  33.4484, lng: -112.074, label: 'Phoenix' },
+  { lat:  45.5051, lng: -122.675, label: 'Portland' },
+  { lat:  43.6532, lng:  -79.383, label: 'Toronto' },
+  { lat:  49.2827, lng: -123.120, label: 'Vancouver' },
+  { lat:  45.5017, lng:  -73.567, label: 'Montreal' },
+  { lat:  51.0447, lng: -114.066, label: 'Calgary' },
+  { lat:  19.4326, lng:  -99.133, label: 'Mexico City' },
+  { lat:  36.1627, lng:  -86.781, label: 'Nashville' },
+  { lat:  42.3314, lng:  -83.045, label: 'Detroit' },
+  // South America
+  { lat: -23.5505, lng:  -46.633, label: 'São Paulo' },
+  { lat: -22.9068, lng:  -43.172, label: 'Rio de Janeiro' },
+  { lat: -34.6037, lng:  -58.381, label: 'Buenos Aires' },
+  { lat: -33.4489, lng:  -70.669, label: 'Santiago' },
+  { lat:   4.7110, lng:  -74.072, label: 'Bogotá' },
+  { lat:  -8.0476, lng:  -34.877, label: 'Recife' },
+  // Europe
+  { lat:  51.5074, lng:   -0.127, label: 'London' },
+  { lat:  53.4808, lng:   -2.242, label: 'Manchester' },
+  { lat:  55.9533, lng:   -3.188, label: 'Edinburgh' },
+  { lat:  48.8566, lng:    2.352, label: 'Paris' },
+  { lat:  52.5200, lng:   13.405, label: 'Berlin' },
+  { lat:  48.1351, lng:   11.582, label: 'Munich' },
+  { lat:  40.4168, lng:   -3.703, label: 'Madrid' },
+  { lat:  41.3851, lng:    2.173, label: 'Barcelona' },
+  { lat:  41.9028, lng:   12.496, label: 'Rome' },
+  { lat:  45.4654, lng:    9.185, label: 'Milan' },
+  { lat:  52.3676, lng:    4.904, label: 'Amsterdam' },
+  { lat:  59.3293, lng:   18.068, label: 'Stockholm' },
+  { lat:  47.3769, lng:    8.541, label: 'Zurich' },
+  { lat:  50.0755, lng:   14.437, label: 'Prague' },
+  { lat:  38.7223, lng:   -9.139, label: 'Lisbon' },
+  { lat:  59.9139, lng:   10.752, label: 'Oslo' },
+  // Asia
+  { lat:  12.9716, lng:   77.594, label: 'Bengaluru' },
+  { lat:  19.0760, lng:   72.877, label: 'Mumbai' },
+  { lat:  28.6139, lng:   77.209, label: 'Delhi' },
+  { lat:  13.0827, lng:   80.270, label: 'Chennai' },
+  { lat:  22.5726, lng:   88.363, label: 'Kolkata' },
+  { lat:  17.3850, lng:   78.486, label: 'Hyderabad' },
+  { lat:   1.3521, lng:  103.820, label: 'Singapore' },
+  { lat:  35.6762, lng:  139.650, label: 'Tokyo' },
+  { lat:  37.5665, lng:  126.978, label: 'Seoul' },
+  { lat:  31.2304, lng:  121.473, label: 'Shanghai' },
+  { lat:  25.2048, lng:   55.270, label: 'Dubai' },
+  { lat:   3.1390, lng:  101.686, label: 'Kuala Lumpur' },
+  { lat:  13.7563, lng:  100.501, label: 'Bangkok' },
+  { lat:  14.5995, lng:  120.984, label: 'Manila' },
+  { lat:  22.3193, lng:  114.169, label: 'Hong Kong' },
+  { lat:   6.9271, lng:   79.861, label: 'Colombo' },
+  // Australia & Oceania
+  { lat: -33.8688, lng:  151.209, label: 'Sydney' },
+  { lat: -37.8136, lng:  144.963, label: 'Melbourne' },
+  { lat: -27.4698, lng:  153.021, label: 'Brisbane' },
+  { lat: -36.8485, lng:  174.763, label: 'Auckland' },
+];
+
+---
+
+<BaseLayout
+  title="Contribute"
+  description="Share your story of learning or teaching Bharatanatyam."
+>
+  <!-- Leaflet CSS — served from CDN, bypasses /_astro/ bundling -->
+  <link
+    slot="head"
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <h1>Contribute to the Living Archive</h1>
+
+  <p>Bharatanatyam is passed down through people, and no single collection can
+  document every teacher, lineage, or experience. This project is an ongoing
+  effort to record some of that knowledge and make it available for others
+  to study.</p>
+
+  <p>If you learn, teach, perform, or research Bharatanatyam, you can help
+  expand the living archive.</p>
+
+  <h2>Ways to contribute</h2>
+
+  <dl class="contrib-ways">
+    <dt>Share an oral history</dt>
+    <dd>Record or write about a lesson you remember, a teacher who shaped your
+    practice, or something you hope future dancers will carry forward.</dd>
+
+    <dt>Add context or a correction</dt>
+    <dd>If you notice an error, have an alternative interpretation, or can
+    provide useful context for an existing entry, your contribution can help
+    make the archive more accurate.</dd>
+
+    <dt>Contribute a śloka recording</dt>
+    <dd>Recordings from other teachers or lineages can help document differences
+    in pronunciation and recitation that the current corpus does not
+    represent.</dd>
+
+    <dt>Share a translation or explanation</dt>
+    <dd>Translations and contextual notes in Tamil, Hindi, or other languages
+    can help make the material accessible to a wider community.</dd>
+  </dl>
+
+  <hr />
+
+  <h2>How to contribute</h2>
+
+  <p>Use the form below to describe your contribution and provide the relevant
+  audio or text. You may request to be credited by name or to contribute
+  anonymously.</p>
+
+  <div class="gform-embed">
+    <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLSeomEehO81eJLiBIu3BxZibTOX72F-Fwz67BjUZLHTz0YKnzA/viewform?embedded=true"
+      width="640"
+      height="1450"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0"
+    >Loading…</iframe>
+  </div>
+
+  <hr />
+
+  <h2>Where contributors are from</h2>
+
+  <div
+    id="contributor-map"
+    class="contrib-map"
+    data-regions={JSON.stringify(contributorRegions)}
+  ></div>
+
+  <p class="map-note">Locations are approximate and represent regions, not addresses.</p>
+
+  <hr />
+
+  <h2>A note on consent</h2>
+
+  <p>Submissions will be reviewed before being added to the public archive.
+  The form explains how material may be used, whether it may be published or
+  adapted, and how contributors can ask questions or request withdrawal. No
+  contribution will be published without the appropriate consent.</p>
+
+  <!-- Leaflet JS + map & form init — loaded after body so L is available -->
+  <script
+    slot="tail"
+    is:inline
+    src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+
+  <script slot="tail" is:inline>
+    // ── Map ────────────────────────────────────────────────────────────────
+    const mapEl = document.getElementById('contributor-map');
+    if (mapEl && typeof L !== 'undefined') {
+      const regions = JSON.parse(mapEl.dataset.regions || '[]');
+
+      const map = L.map('contributor-map', {
+        scrollWheelZoom: false,
+        zoomControl: true,
+      });
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const markers = regions.map(function(r) {
+        const m = L.circleMarker([r.lat, r.lng], {
+          radius: 4,
+          fillColor: '#b5531a',
+          color: '#b5531a',
+          weight: 0,
+          fillOpacity: 0.75,
+        }).addTo(map);
+        m.bindPopup('<strong>' + r.label + '</strong>');
+        return m;
+      });
+
+      if (markers.length) {
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.35));
+      } else {
+        map.setView([20, 0], 2);
+      }
+    }
+
+  </script>
+
+</BaseLayout>

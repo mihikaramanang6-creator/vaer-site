@@ -1,0 +1,97 @@
+---
+const {
+  frontmatter = {},
+  title: directTitle,
+  description: directDesc,
+  fullBleed: directFullBleed = false,
+} = Astro.props;
+
+const title = directTitle ?? frontmatter.title;
+const description =
+  directDesc ??
+  frontmatter.description ??
+  'An archive of what stays, what changes, and what dancers choose to carry forward in Bharatanatyam across geographies and generations.';
+
+const fullBleed = directFullBleed || frontmatter.fullBleed || false;
+
+const siteTitle = 'vaer';
+const pageTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
+const canonicalURL = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site).href
+  : Astro.url.href;
+const pathname = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content={siteTitle} />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles/global.css" />
+
+    <!-- Fonts: EB Garamond (body/hero) + Inter (ui/headings) + Noto Serif Tamil (logo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Per-page head additions -->
+    <slot name="head" />
+  </head>
+
+  <body>
+    <div class="stripe"></div>
+
+    <div class="page">
+      <header class="site-header h-pad">
+        <div>
+          <a href="/" class="logo">
+            <span class="logo-tamil">வேர்</span>
+            <span class="logo-latin">vaer.</span>
+            <span class="logo-roots">(Roots)</span>
+          </a>
+        </div>
+        <nav aria-label="Main navigation">
+          <a href="/" aria-current={pathname === '/' ? 'page' : undefined}>Home</a>
+          <a href="/about" aria-current={pathname === '/about' ? 'page' : undefined}>About</a>
+          <a href="/corpus" aria-current={pathname === '/corpus' ? 'page' : undefined}>Corpus</a>
+          <a href="/oral-histories" aria-current={pathname === '/oral-histories' ? 'page' : undefined}>Oral Histories</a>
+          <a href="/ethnography" aria-current={pathname === '/ethnography' ? 'page' : undefined}>Ethnography</a>
+          <a href="/contribute" aria-current={pathname === '/contribute' ? 'page' : undefined}>Contribute</a>
+        </nav>
+      </header>
+
+      <main>
+        {fullBleed ? (
+          <slot />
+        ) : (
+          <article class="content h-pad">
+            <slot />
+          </article>
+        )}
+      </main>
+
+      <footer class="h-pad">
+        <span>Built by <a href="/about">Mihika Ramanan</a> &middot; <em>vaer (Roots)</em> &middot; vaer.site</span>
+        <span><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a></span>
+      </footer>
+
+      <!-- Per-page scripts -->
+      <slot name="tail" />
+    </div>
+  </body>
+</html>
